@@ -1,6 +1,6 @@
 from pathlib import Path
 import pandas as pd
-from typing import Callable, Any, Optional
+from typing import Callable, Any
 from numpy import zeros
 import numpy.typing as npt
 import scipy.cluster.hierarchy as sch
