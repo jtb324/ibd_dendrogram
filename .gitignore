@@ -2,3 +2,6 @@
 *.txt
 *ipynb
 *.mypy_cache
+
+# build directory
+dist/

@@ -7,20 +7,25 @@ import scipy.cluster.hierarchy as sch
 from scipy.spatial.distance import squareform
 import matplotlib.pyplot as plt
 
+
 def check_kwargs(args_dict: dict[str, Any]) -> str | None:
     """Function that will make sure that the necessary arguments are passed to distance function
-    
+
     Parameters
-    
+
     args_dict : Dict[str, Any]
         Dictionary that has the arguments as keys and the values for the distance function
     """
-    if not all([elem in args_dict.keys() for elem in ["pair_1", "pair_2", "pairs_df", "cm_threshold"]]):
+    if not all(
+        [
+            elem in args_dict.keys()
+            for elem in ["pair_1", "pair_2", "pairs_df", "cm_threshold"]
+        ]
+    ):
         return "Not enough arguments passed to the _determine_distances function. Expected pair_1, pair_2, pairs_df, cm_threshold"
 
-def _determine_distances(
-    **kwargs
-) -> tuple[str | None, float]:
+
+def _determine_distances(**kwargs) -> tuple[str | None, float]:
     """Function that will determine the distances between the main grid and then each connected grid. It will use a value of 2.5 for all grids that don't share a segment. This is just the min cM value, 5cM, divided in half
 
     Parameter:
@@ -39,10 +44,10 @@ def _determine_distances(
         return err, 0.0
 
     # getting all the necessary values out of the kwargs dict
-    pair_1 = kwargs.pop('pair_1')
-    pair_2 = kwargs.pop('pair_2')
-    pairs_df = kwargs.pop('pairs_df')
-    min_cM = kwargs.pop('cm_threshold')
+    pair_1 = kwargs.pop("pair_1")
+    pair_2 = kwargs.pop("pair_2")
+    pairs_df = kwargs.pop("pairs_df")
+    min_cM = kwargs.pop("cm_threshold")
 
     if pair_2 == pair_1:
 
@@ -136,21 +141,23 @@ def make_distance_matrix(
             )
             if err != None:
                 print(err)
-                return None, None  
+                return None, None
 
             matrix[i][j] = distance
-            
 
     return ids_index, matrix
 
+
 def generate_dendrogram(matrix: npt.NDArray) -> npt.NDArray:
     """Function that will perform the hierarchical clustering algorithm
-    
+
     Parameters
     ----------
     matrix : Array
-        distance matrix represented by 2D numpy array. distance should be calculated based on 1/(ibd segment length)
-        
+        distance matrix represented by 2D numpy array.
+        distance should be calculated based on 1/(ibd segment
+        length)
+
     Returns
     -------
     Array
@@ -158,27 +165,111 @@ def generate_dendrogram(matrix: npt.NDArray) -> npt.NDArray:
     """
     squareform_matrix = squareform(matrix)
 
-    return sch.linkage(squareform_matrix, method='ward')
+    return sch.linkage(squareform_matrix, method="ward")
 
-def draw_dendrogram(clustering_results: npt.NDArray, grids: list[str], output_name: Path) -> None:
-    """Function that will draw the dendrogram"""
-    plt.figure(figsize=(15, 12))
+
+def _generate_label_colors(grid_list: list[str], cases: list[str]) -> dict[str, str]:
+    """Function that will generate the color dictionary
+    indicating what color each id label should be
+
+    Parameters
+    ----------
+    grid_list : list[str]
+        list of id strings
+
+    cases : list of individuals who are considered cases for a
+    disease or phenotype
+
+    Returns
+    -------
+    dict[str,str]
+        returns a dictionary where the key is the id and the
+        values are the color of the label for that id.
+    """
+    color_dict = {}
+
+    for grid in grid_list:
+        if grid in cases:
+            color_dict[grid] = "r"
+        else:
+            color_dict[grid] = "k"
+    print(color_dict)
+    return color_dict
+
+
+def draw_dendrogram(
+    clustering_results: npt.NDArray,
+    grids: list[str],
+    output_name: Path | str,
+    cases: list[str] | None = None,
+    title: str | None = None,
+    save_fig: bool = False,
+) -> tuple[plt.Figure, plt.Axes, dict[str, Any]]:
+    """Function that will draw the dendrogram
+
+    Parameters
+    ----------
+    clustering_results : npt.NDArray
+        numpy array that has the results from running the generate_dendrogram function
+
+    grids : list[str]
+        list of ids to use as labels
+
+    output_name : Path | str
+        path object or a string that tells where the
+        dendrogram will be saved to.
+
+    cases : list[str] | None
+        list of case ids. If the user doesn't provided this
+        value then all of the labels on the dendrogram will
+        be black. If the user provides a value then the case
+        labels will be red. Value defaults to None
+
+    title : str | None
+        Optional title for the plot. If this is not provided
+        then the plot will have no title
+
+    Returns
+    -------
+    tuple[plt.Figure, plt.Axes, dict[str, Any]]
+        returns a tuple with the matplotlib Figure, the 
+        matplotlib Axes object, and a dictionary from the sch.
+        dendrogram command
+    """
+    figure = plt.figure(figsize=(15, 12))
     ax = plt.subplot(111)
 
     # Temporarily override the default line width:
-    with plt.rc_context({'lines.linewidth': 2}):
+    with plt.rc_context(
+        {
+            "lines.linewidth": 2,
+        }
+    ):
         dendrogram = sch.dendrogram(
-            clustering_results, 
+            clustering_results,
             labels=grids,
             orientation="left",
             color_threshold=0,
-            above_threshold_color="black"
-            )
+            above_threshold_color="black",
+        )
 
-    ax.spines['right'].set_visible(False)
-    ax.spines['top'].set_visible(False)
-    ax.spines['left'].set_visible(False)
-    ax.spines['bottom'].set_visible(False)
+    # change the color of the nodes for cases if the user wants to.
+    if cases:
+        color_dict = _generate_label_colors(grids, cases)
+        yaxis_labels = ax.get_ymajorticklabels()
+        for label in yaxis_labels:
+            label.set_color(color_dict[label.get_text()])
+
+    # removing the ticks and axes
+    ax.spines["right"].set_visible(False)
+    ax.spines["top"].set_visible(False)
+    ax.spines["left"].set_visible(False)
+    ax.spines["bottom"].set_visible(False)
     ax.axes.get_xaxis().set_visible(False)
 
-    plt.savefig(output_name)
+    if title:
+        plt.title(title, fontsize=20)
+    if save_fig:
+        plt.savefig(output_name)
+
+    return figure, ax, dendrogram
