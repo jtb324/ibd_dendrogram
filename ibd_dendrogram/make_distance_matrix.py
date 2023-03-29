@@ -73,7 +73,7 @@ def _determine_distances(**kwargs) -> tuple[str | None, float]:
     return None, 1 / ibd_length
 
 
-def record_matrix(output: str, matrix, pair_list: list[str]) -> None:
+def record_matrix(output: Path | str, matrix, pair_list: list[str]) -> None:
     """Function that will write the dataframe to a file
 
     Parameters
