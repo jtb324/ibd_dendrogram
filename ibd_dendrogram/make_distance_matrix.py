@@ -12,7 +12,7 @@ def check_kwargs(args_dict: dict[str, Any]) -> str | None:
     """Function that will make sure that the necessary arguments are passed to distance function
 
     Parameters
-
+    ----------
     args_dict : Dict[str, Any]
         Dictionary that has the arguments as keys and the values for the distance function
     """
@@ -28,8 +28,8 @@ def check_kwargs(args_dict: dict[str, Any]) -> str | None:
 def _determine_distances(**kwargs) -> tuple[str | None, float]:
     """Function that will determine the distances between the main grid and then each connected grid. It will use a value of 2.5 for all grids that don't share a segment. This is just the min cM value, 5cM, divided in half
 
-    Parameter:
-    __________
+    Parameters
+    ----------
     pair_1 : str
         string that has the main grid id
 
@@ -77,7 +77,7 @@ def record_matrix(output: Path | str, matrix, pair_list: list[str]) -> None:
     """Function that will write the dataframe to a file
 
     Parameters
-
+    ----------
     output : str
         filepath to write the output to
 
@@ -193,7 +193,7 @@ def _generate_label_colors(grid_list: list[str], cases: list[str]) -> dict[str, 
             color_dict[grid] = "r"
         else:
             color_dict[grid] = "k"
-    print(color_dict)
+
     return color_dict
 
 
