@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ibd_dendrogram.make_distance_matrix &mdash; ibd_dendrogram 0.10.0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ibd_dendrogram
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ibd_dendrogram</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">ibd_dendrogram.make_distance_matrix</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for ibd_dendrogram.make_distance_matrix</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">zeros</span>
+<span class="kn">import</span> <span class="nn">numpy.typing</span> <span class="k">as</span> <span class="nn">npt</span>
+<span class="kn">import</span> <span class="nn">scipy.cluster.hierarchy</span> <span class="k">as</span> <span class="nn">sch</span>
+<span class="kn">from</span> <span class="nn">scipy.spatial.distance</span> <span class="kn">import</span> <span class="n">squareform</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+
+<div class="viewcode-block" id="check_kwargs"><a class="viewcode-back" href="../../source/ibd_dendrogram.html#ibd_dendrogram.make_distance_matrix.check_kwargs">[docs]</a><span class="k">def</span> <span class="nf">check_kwargs</span><span class="p">(</span><span class="n">args_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function that will make sure that the necessary arguments are passed to distance function</span>
+
+<span class="sd">    Parameters</span>
+
+<span class="sd">    args_dict : Dict[str, Any]</span>
+<span class="sd">        Dictionary that has the arguments as keys and the values for the distance function</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="n">elem</span> <span class="ow">in</span> <span class="n">args_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;pair_1&quot;</span><span class="p">,</span> <span class="s2">&quot;pair_2&quot;</span><span class="p">,</span> <span class="s2">&quot;pairs_df&quot;</span><span class="p">,</span> <span class="s2">&quot;cm_threshold&quot;</span><span class="p">]</span>
+        <span class="p">]</span>
+    <span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;Not enough arguments passed to the _determine_distances function. Expected pair_1, pair_2, pairs_df, cm_threshold&quot;</span></div>
+
+
+<span class="k">def</span> <span class="nf">_determine_distances</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function that will determine the distances between the main grid and then each connected grid. It will use a value of 2.5 for all grids that don&#39;t share a segment. This is just the min cM value, 5cM, divided in half</span>
+
+<span class="sd">    Parameter:</span>
+<span class="sd">    __________</span>
+<span class="sd">    pair_1 : str</span>
+<span class="sd">        string that has the main grid id</span>
+
+
+<span class="sd">    pairs_df : pd.DataFrame</span>
+<span class="sd">        dataframe from the pairs file that has been filtered to just connections with the main grid</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># checking to make sure the function has the right parameters in the kwargs and then returning an error if it doesn&#39;t</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="n">check_kwargs</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">err</span><span class="p">,</span> <span class="mf">0.0</span>
+
+    <span class="c1"># getting all the necessary values out of the kwargs dict</span>
+    <span class="n">pair_1</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;pair_1&quot;</span><span class="p">)</span>
+    <span class="n">pair_2</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;pair_2&quot;</span><span class="p">)</span>
+    <span class="n">pairs_df</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;pairs_df&quot;</span><span class="p">)</span>
+    <span class="n">min_cM</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;cm_threshold&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">pair_2</span> <span class="o">==</span> <span class="n">pair_1</span><span class="p">:</span>
+
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># pulling out the length of the IBD segment based on hapibd</span>
+    <span class="n">filtered_pairs</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">pairs_df</span><span class="p">[</span>
+        <span class="p">((</span><span class="n">pairs_df</span><span class="p">[</span><span class="s2">&quot;pair_1&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">pair_1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">pairs_df</span><span class="p">[</span><span class="s2">&quot;pair_2&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">pair_2</span><span class="p">))</span>
+        <span class="o">|</span> <span class="p">((</span><span class="n">pairs_df</span><span class="p">[</span><span class="s2">&quot;pair_1&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">pair_2</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">pairs_df</span><span class="p">[</span><span class="s2">&quot;pair_2&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">pair_1</span><span class="p">))</span>
+    <span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">filtered_pairs</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+
+        <span class="n">ibd_length</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">min_cM</span> <span class="o">/</span> <span class="mi">2</span>
+
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;no pairwise sharing for grids </span><span class="si">{</span><span class="n">pair_1</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">pair_2</span><span class="si">}</span><span class="s2">. Using an ibd length of </span><span class="si">{</span><span class="n">ibd_length</span><span class="si">}</span><span class="s2">cM instead&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ibd_length</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">filtered_pairs</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;length&quot;</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">ibd_length</span>
+
+
+<div class="viewcode-block" id="record_matrix"><a class="viewcode-back" href="../../source/ibd_dendrogram.html#ibd_dendrogram.make_distance_matrix.record_matrix">[docs]</a><span class="k">def</span> <span class="nf">record_matrix</span><span class="p">(</span><span class="n">output</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span> <span class="n">matrix</span><span class="p">,</span> <span class="n">pair_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function that will write the dataframe to a file</span>
+
+<span class="sd">    Parameters</span>
+
+<span class="sd">    output : str</span>
+<span class="sd">        filepath to write the output to</span>
+
+<span class="sd">    matrix : array</span>
+<span class="sd">        array that has the distance matrix for each individual</span>
+
+<span class="sd">    pair_list : List[str]</span>
+<span class="sd">        list of ids that represent each row of the pair_list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">output_file</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pair_list</span><span class="p">)):</span>
+            <span class="n">distance_str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">distance</span><span class="p">)</span> <span class="k">for</span> <span class="n">distance</span> <span class="ow">in</span> <span class="n">matrix</span><span class="p">[</span><span class="n">i</span><span class="p">]])</span>
+            <span class="n">output_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pair_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="se">\t</span><span class="si">{</span><span class="n">distance_str</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="make_distance_matrix"><a class="viewcode-back" href="../../source/ibd_dendrogram.html#ibd_dendrogram.make_distance_matrix.make_distance_matrix">[docs]</a><span class="k">def</span> <span class="nf">make_distance_matrix</span><span class="p">(</span>
+    <span class="n">pairs_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">min_cM</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">distance_function</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">_determine_distances</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function that will make the distance matrix</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pairs_df : pd.DataFrame</span>
+<span class="sd">        dataframe that has the pairs_files. it should have at least three columns</span>
+<span class="sd">        called &#39;pair_1&#39;, &#39;pair_2&#39;, and &#39;length&#39;</span>
+
+<span class="sd">    min_cM : float</span>
+<span class="sd">        This is the minimum centimorgan threshold that will be divided in half to</span>
+<span class="sd">        get the ibd segment length when pairs do not share a segment</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Dict[str, Dict[str, float]]</span>
+<span class="sd">        returns a tuple where the first object is a list of ids that has the</span>
+<span class="sd">        individual id that corresponds to each row. The second object is the</span>
+<span class="sd">        distance matrix</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># get a list of all the unique ids in the pairs_df</span>
+    <span class="n">id_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+        <span class="nb">set</span><span class="p">(</span><span class="n">pairs_df</span><span class="o">.</span><span class="n">pair_1</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="o">+</span> <span class="n">pairs_df</span><span class="o">.</span><span class="n">pair_2</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+    <span class="p">)</span>
+
+    <span class="n">matrix</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">id_list</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">id_list</span><span class="p">)),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="n">ids_index</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">id_list</span><span class="p">)):</span>
+
+        <span class="n">ids_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">id_list</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">id_list</span><span class="p">)):</span>
+
+            <span class="n">err</span><span class="p">,</span> <span class="n">distance</span> <span class="o">=</span> <span class="n">distance_function</span><span class="p">(</span>
+                <span class="n">pair_1</span><span class="o">=</span><span class="n">id_list</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                <span class="n">pair_2</span><span class="o">=</span><span class="n">id_list</span><span class="p">[</span><span class="n">j</span><span class="p">],</span>
+                <span class="n">pairs_df</span><span class="o">=</span><span class="n">pairs_df</span><span class="p">,</span>
+                <span class="n">cm_threshold</span><span class="o">=</span><span class="n">min_cM</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+
+            <span class="n">matrix</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">distance</span>
+
+    <span class="k">return</span> <span class="n">ids_index</span><span class="p">,</span> <span class="n">matrix</span></div>
+
+
+<div class="viewcode-block" id="generate_dendrogram"><a class="viewcode-back" href="../../source/ibd_dendrogram.html#ibd_dendrogram.make_distance_matrix.generate_dendrogram">[docs]</a><span class="k">def</span> <span class="nf">generate_dendrogram</span><span class="p">(</span><span class="n">matrix</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function that will perform the hierarchical clustering algorithm</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    matrix : Array</span>
+<span class="sd">        distance matrix represented by 2D numpy array.</span>
+<span class="sd">        distance should be calculated based on 1/(ibd segment</span>
+<span class="sd">        length)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Array</span>
+<span class="sd">        returns the results of the clustering as a numpy array</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">squareform_matrix</span> <span class="o">=</span> <span class="n">squareform</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">sch</span><span class="o">.</span><span class="n">linkage</span><span class="p">(</span><span class="n">squareform_matrix</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;ward&quot;</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_generate_label_colors</span><span class="p">(</span><span class="n">grid_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">cases</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function that will generate the color dictionary</span>
+<span class="sd">    indicating what color each id label should be</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    grid_list : list[str]</span>
+<span class="sd">        list of id strings</span>
+
+<span class="sd">    cases : list of individuals who are considered cases for a</span>
+<span class="sd">    disease or phenotype</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict[str,str]</span>
+<span class="sd">        returns a dictionary where the key is the id and the</span>
+<span class="sd">        values are the color of the label for that id.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">color_dict</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">grid</span> <span class="ow">in</span> <span class="n">grid_list</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">grid</span> <span class="ow">in</span> <span class="n">cases</span><span class="p">:</span>
+            <span class="n">color_dict</span><span class="p">[</span><span class="n">grid</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;r&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">color_dict</span><span class="p">[</span><span class="n">grid</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;k&quot;</span>
+
+    <span class="k">return</span> <span class="n">color_dict</span>
+
+
+<div class="viewcode-block" id="draw_dendrogram"><a class="viewcode-back" href="../../source/ibd_dendrogram.html#ibd_dendrogram.make_distance_matrix.draw_dendrogram">[docs]</a><span class="k">def</span> <span class="nf">draw_dendrogram</span><span class="p">(</span>
+    <span class="n">clustering_results</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">,</span>
+    <span class="n">grids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">output_name</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">cases</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">save_fig</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function that will draw the dendrogram</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    clustering_results : npt.NDArray</span>
+<span class="sd">        numpy array that has the results from running the generate_dendrogram function</span>
+
+<span class="sd">    grids : list[str]</span>
+<span class="sd">        list of ids to use as labels</span>
+
+<span class="sd">    output_name : Path | str</span>
+<span class="sd">        path object or a string that tells where the</span>
+<span class="sd">        dendrogram will be saved to.</span>
+
+<span class="sd">    cases : list[str] | None</span>
+<span class="sd">        list of case ids. If the user doesn&#39;t provided this</span>
+<span class="sd">        value then all of the labels on the dendrogram will</span>
+<span class="sd">        be black. If the user provides a value then the case</span>
+<span class="sd">        labels will be red. Value defaults to None</span>
+
+<span class="sd">    title : str | None</span>
+<span class="sd">        Optional title for the plot. If this is not provided</span>
+<span class="sd">        then the plot will have no title</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple[plt.Figure, plt.Axes, dict[str, Any]]</span>
+<span class="sd">        returns a tuple with the matplotlib Figure, the </span>
+<span class="sd">        matplotlib Axes object, and a dictionary from the sch.</span>
+<span class="sd">        dendrogram command</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">figure</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+
+    <span class="c1"># Temporarily override the default line width:</span>
+    <span class="k">with</span> <span class="n">plt</span><span class="o">.</span><span class="n">rc_context</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;lines.linewidth&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">):</span>
+        <span class="n">dendrogram</span> <span class="o">=</span> <span class="n">sch</span><span class="o">.</span><span class="n">dendrogram</span><span class="p">(</span>
+            <span class="n">clustering_results</span><span class="p">,</span>
+            <span class="n">labels</span><span class="o">=</span><span class="n">grids</span><span class="p">,</span>
+            <span class="n">orientation</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span>
+            <span class="n">color_threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">above_threshold_color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="c1"># change the color of the nodes for cases if the user wants to.</span>
+    <span class="k">if</span> <span class="n">cases</span><span class="p">:</span>
+        <span class="n">color_dict</span> <span class="o">=</span> <span class="n">_generate_label_colors</span><span class="p">(</span><span class="n">grids</span><span class="p">,</span> <span class="n">cases</span><span class="p">)</span>
+        <span class="n">yaxis_labels</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_ymajorticklabels</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">yaxis_labels</span><span class="p">:</span>
+            <span class="n">label</span><span class="o">.</span><span class="n">set_color</span><span class="p">(</span><span class="n">color_dict</span><span class="p">[</span><span class="n">label</span><span class="o">.</span><span class="n">get_text</span><span class="p">()])</span>
+
+    <span class="c1"># removing the ticks and axes</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;right&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;top&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;bottom&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">get_xaxis</span><span class="p">()</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">title</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">save_fig</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">output_name</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">figure</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">dendrogram</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, J.T. Baker.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
