@@ -3,5 +3,7 @@
 *ipynb
 *.mypy_cache
 
+
 # build directory
 dist/
+docs/_build
