@@ -5,8 +5,9 @@
 import sys
 import os
 
-sys.path.insert(0, os.path.abspath('./source'))
-# sys.path.insert(1, os.path.abspath('../../'))
+# sys.path.insert(0, os.path.abspath('../'))
+sys.path.insert(0, os.path.abspath('../ibd_dendrogram'))
+sys.path.insert(0, os.path.abspath('..'))
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
@@ -25,7 +26,9 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',
     'sphinx.ext.viewcode',
-    "sphinx.ext.autogen"
+    'sphinx.ext.autodoc',
+    'sphinx.ext.autosummary',
+    'sphinxcontrib_autodocgen',
 ]
 
 templates_path = ['_templates']
@@ -38,3 +41,7 @@ exclude_patterns = []
 
 html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
+html_theme_options = {
+    "display_version":True,
+    "style_external_links":True
+}

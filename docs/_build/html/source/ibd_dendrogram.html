@@ -16,7 +16,8 @@
         <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" /> 
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="ibd_dendrogram" href="../modules.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -38,23 +39,24 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <!-- Local TOC -->
-              <div class="local-toc"><ul>
-<li><a class="reference internal" href="#">ibd_dendrogram package</a><ul>
-<li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-ibd_dendrogram.make_distance_matrix">ibd_dendrogram.make_distance_matrix module</a><ul>
-<li><a class="reference internal" href="#ibd_dendrogram.make_distance_matrix.check_kwargs"><code class="docutils literal notranslate"><span class="pre">check_kwargs()</span></code></a></li>
-<li><a class="reference internal" href="#ibd_dendrogram.make_distance_matrix.draw_dendrogram"><code class="docutils literal notranslate"><span class="pre">draw_dendrogram()</span></code></a></li>
-<li><a class="reference internal" href="#ibd_dendrogram.make_distance_matrix.generate_dendrogram"><code class="docutils literal notranslate"><span class="pre">generate_dendrogram()</span></code></a></li>
-<li><a class="reference internal" href="#ibd_dendrogram.make_distance_matrix.make_distance_matrix"><code class="docutils literal notranslate"><span class="pre">make_distance_matrix()</span></code></a></li>
-<li><a class="reference internal" href="#ibd_dendrogram.make_distance_matrix.record_matrix"><code class="docutils literal notranslate"><span class="pre">record_matrix()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#module-ibd_dendrogram">Module contents</a></li>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../modules.html">ibd_dendrogram</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">ibd_dendrogram package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-ibd_dendrogram.make_distance_matrix">make_distance_matrix module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ibd_dendrogram.make_distance_matrix.check_kwargs"><code class="docutils literal notranslate"><span class="pre">check_kwargs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ibd_dendrogram.make_distance_matrix.draw_dendrogram"><code class="docutils literal notranslate"><span class="pre">draw_dendrogram()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ibd_dendrogram.make_distance_matrix.generate_dendrogram"><code class="docutils literal notranslate"><span class="pre">generate_dendrogram()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ibd_dendrogram.make_distance_matrix.make_distance_matrix"><code class="docutils literal notranslate"><span class="pre">make_distance_matrix()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ibd_dendrogram.make_distance_matrix.record_matrix"><code class="docutils literal notranslate"><span class="pre">record_matrix()</span></code></a></li>
 </ul>
 </li>
 </ul>
-</div>
+</li>
+</ul>
+</li>
+</ul>
+
         </div>
       </div>
     </nav>
@@ -65,10 +67,11 @@
       </nav>
 
       <div class="wy-nav-content">
-        <div class="rst-content">
+        <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../modules.html">ibd_dendrogram</a></li>
       <li class="breadcrumb-item active">ibd_dendrogram package</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/source/ibd_dendrogram.rst.txt" rel="nofollow"> View page source</a>
@@ -81,18 +84,15 @@
              
   <section id="ibd-dendrogram-package">
 <h1>ibd_dendrogram package<a class="headerlink" href="#ibd-dendrogram-package" title="Permalink to this heading"></a></h1>
-<section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
-</section>
 <section id="module-ibd_dendrogram.make_distance_matrix">
-<span id="ibd-dendrogram-make-distance-matrix-module"></span><h2>ibd_dendrogram.make_distance_matrix module<a class="headerlink" href="#module-ibd_dendrogram.make_distance_matrix" title="Permalink to this heading"></a></h2>
+<span id="make-distance-matrix-module"></span><h2>make_distance_matrix module<a class="headerlink" href="#module-ibd_dendrogram.make_distance_matrix" title="Permalink to this heading"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="ibd_dendrogram.make_distance_matrix.check_kwargs">
 <span class="sig-prename descclassname"><span class="pre">ibd_dendrogram.make_distance_matrix.</span></span><span class="sig-name descname"><span class="pre">check_kwargs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/ibd_dendrogram/make_distance_matrix.html#check_kwargs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ibd_dendrogram.make_distance_matrix.check_kwargs" title="Permalink to this definition"></a></dt>
 <dd><p>Function that will make sure that the necessary arguments are passed to distance function</p>
-<p>Parameters</p>
-<dl class="simple">
-<dt>args_dict<span class="classifier">Dict[str, Any]</span></dt><dd><p>Dictionary that has the arguments as keys and the values for the distance function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>args_dict</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – Dictionary that has the arguments as keys and the values for the distance function</p>
 </dd>
 </dl>
 </dd></dl>
@@ -174,27 +174,26 @@ distance matrix</p>
 <dt class="sig sig-object py" id="ibd_dendrogram.make_distance_matrix.record_matrix">
 <span class="sig-prename descclassname"><span class="pre">ibd_dendrogram.make_distance_matrix.</span></span><span class="sig-name descname"><span class="pre">record_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pair_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/ibd_dendrogram/make_distance_matrix.html#record_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ibd_dendrogram.make_distance_matrix.record_matrix" title="Permalink to this definition"></a></dt>
 <dd><p>Function that will write the dataframe to a file</p>
-<p>Parameters</p>
-<dl class="simple">
-<dt>output<span class="classifier">str</span></dt><dd><p>filepath to write the output to</p>
-</dd>
-<dt>matrix<span class="classifier">array</span></dt><dd><p>array that has the distance matrix for each individual</p>
-</dd>
-<dt>pair_list<span class="classifier">List[str]</span></dt><dd><p>list of ids that represent each row of the pair_list</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>output</strong> (<em>str</em>) – filepath to write the output to</p></li>
+<li><p><strong>matrix</strong> (<em>array</em>) – array that has the distance matrix for each individual</p></li>
+<li><p><strong>pair_list</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – list of ids that represent each row of the pair_list</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
 
-</section>
-<section id="module-ibd_dendrogram">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ibd_dendrogram" title="Permalink to this heading"></a></h2>
 </section>
 </section>
 
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../modules.html" class="btn btn-neutral float-left" title="ibd_dendrogram" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
 
   <hr/>
 

@@ -1637,6 +1637,20 @@ sphinx = "*"
 test = ["pytest", "pytest-cov"]
 
 [[package]]
+name = "sphinx-autodocgen"
+version = "1.3"
+description = "Sphinx AutoDocGen extension"
+category = "dev"
+optional = false
+python-versions = ">=3.6, <4"
+files = [
+    {file = "sphinx_autodocgen-1.3-py2.py3-none-any.whl", hash = "sha256:d04f63b824b7a0c72c6d51127e24f03bd58322fabcc18ac9ba9b8200052280d0"},
+]
+
+[package.dependencies]
+sphinx = "*"
+
+[[package]]
 name = "sphinx-rtd-theme"
 version = "1.2.0"
 description = "Read the Docs theme for Sphinx"
@@ -1879,4 +1893,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.11"
-content-hash = "62014421daab4b2bb37285989644d3b0af18b675916241b7f4547143c8fa115a"
+content-hash = "6c7447a99724f98e47bc6bdfe4b71c5506b5876b84490b8c0e48b78220eaf62a"
