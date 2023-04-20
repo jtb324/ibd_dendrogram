@@ -1,4 +1,4 @@
-ibd\_dendrogram package
+API documentation
 =======================
 
 
