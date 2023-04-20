@@ -7,3 +7,9 @@ ibd-dendrogramm was designed to be an to use package that has a simplistic inter
 .. code-block:: python
 
     grids, distance_matrix = make_distance_matrix(pairs_df, cM_threshold, distance_function)
+
+2. generate_dendrogram:
+
+.. code-block:: python
+
+    dendrogram_array = generate_dendrogram(distance_matrix)
