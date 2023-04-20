@@ -1,8 +1,8 @@
-API documentation
+API Documentation
 =======================
 
 
-make\_distance\_matrix module
+ibd\_dendrogram.make\_distance\_matrix module
 ---------------------------------------------
 
 .. automodule:: ibd_dendrogram.make_distance_matrix

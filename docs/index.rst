@@ -25,6 +25,6 @@ This tool can be installed from `PYPI <https://pypi.org/project/ibd-dendrogram/>
    :caption: Package API:
    :Hidden:
 
-   modules
+   source/modules
 
 
