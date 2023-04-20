@@ -22,9 +22,10 @@ This tool can be installed from `PYPI <https://pypi.org/project/ibd-dendrogram/>
 
 .. toctree::
    :maxdepth: 1
-   :caption: Package API:
+   :caption: Contents:
    :Hidden:
 
    modules
+   examples
 
 

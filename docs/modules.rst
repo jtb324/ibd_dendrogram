@@ -1,4 +1,4 @@
-ibd_dendrogram
+Package API
 ==============
 
 .. toctree::
