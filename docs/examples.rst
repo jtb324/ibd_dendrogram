@@ -11,5 +11,6 @@ ibd-dendrogramm was designed to be an to use package that has a simplistic inter
 2. generate_dendrogram:
 
 .. code-block:: python
+    :linenos:
 
     dendrogram_array = generate_dendrogram(distance_matrix)

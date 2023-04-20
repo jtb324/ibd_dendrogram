@@ -1,6 +1,6 @@
 from pathlib import Path
 import pandas as pd
-from typing import Callable, Any
+from typing import Callable, Any, Dict, List, Optional, Union
 from numpy import zeros
 import numpy.typing as npt
 import scipy.cluster.hierarchy as sch
@@ -8,7 +8,7 @@ from scipy.spatial.distance import squareform
 import matplotlib.pyplot as plt
 
 
-def check_kwargs(args_dict: dict[str, Any]) -> str | None:
+def check_kwargs(args_dict: dict[str, Any]) -> Optional[str]:
     """Function that will make sure that the necessary arguments are passed to distance function
 
     Parameters
@@ -25,7 +25,7 @@ def check_kwargs(args_dict: dict[str, Any]) -> str | None:
         return "Not enough arguments passed to the _determine_distances function. Expected pair_1, pair_2, pairs_df, cm_threshold"
 
 
-def _determine_distances(**kwargs) -> tuple[str | None, float]:
+def _determine_distances(**kwargs) -> tuple[Optional[str], float]:
     """Function that will determine the distances between the main grid and then each connected grid. It will use a value of 2.5 for all grids that don't share a segment. This is just the min cM value, 5cM, divided in half
 
     Parameters
@@ -73,7 +73,7 @@ def _determine_distances(**kwargs) -> tuple[str | None, float]:
     return None, 1 / ibd_length
 
 
-def record_matrix(output: Path | str, matrix, pair_list: list[str]) -> None:
+def record_matrix(output: Union[Path, str], matrix, pair_list: List[str]) -> None:
     """Function that will write the dataframe to a file
 
     Parameters
@@ -168,7 +168,7 @@ def generate_dendrogram(matrix: npt.NDArray) -> npt.NDArray:
     return sch.linkage(squareform_matrix, method="ward")
 
 
-def _generate_label_colors(grid_list: list[str], cases: list[str]) -> dict[str, str]:
+def _generate_label_colors(grid_list: List[str], cases: List[str]) -> Dict[str, str]:
     """Function that will generate the color dictionary
     indicating what color each id label should be
 
@@ -199,12 +199,12 @@ def _generate_label_colors(grid_list: list[str], cases: list[str]) -> dict[str, 
 
 def draw_dendrogram(
     clustering_results: npt.NDArray,
-    grids: list[str],
-    output_name: Path | str,
-    cases: list[str] | None = None,
-    title: str | None = None,
+    grids: List[str],
+    output_name: Union[Path, str],
+    cases: Optional[List[str]] = None,
+    title: Optional[str] = None,
     save_fig: bool = False,
-) -> tuple[plt.Figure, plt.Axes, dict[str, Any]]:
+) -> tuple[plt.Figure, plt.Axes, Dict[str, Any]]:
     """Function that will draw the dendrogram
 
     Parameters
@@ -232,7 +232,7 @@ def draw_dendrogram(
     Returns
     -------
     tuple[plt.Figure, plt.Axes, dict[str, Any]]
-        returns a tuple with the matplotlib Figure, the 
+        returns a tuple with the matplotlib Figure, the
         matplotlib Axes object, and a dictionary from the sch.
         dendrogram command
     """
