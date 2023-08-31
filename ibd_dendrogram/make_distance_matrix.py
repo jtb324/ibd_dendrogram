@@ -203,6 +203,7 @@ def draw_dendrogram(
     output_name: Union[Path, str],
     cases: Optional[List[str]] = None,
     title: Optional[str] = None,
+    node_font_size: int = 10,
     save_fig: bool = False,
 ) -> tuple[plt.Figure, plt.Axes, Dict[str, Any]]:
     """Function that will draw the dendrogram
@@ -229,6 +230,12 @@ def draw_dendrogram(
         Optional title for the plot. If this is not provided
         then the plot will have no title
 
+    node_font_size : int
+        Size for the font of the dendrogram leaf nodes
+
+    save_fig : bool 
+        whether or not to save the figure. Defaults to False.
+
     Returns
     -------
     tuple[plt.Figure, plt.Axes, dict[str, Any]]
@@ -251,6 +258,7 @@ def draw_dendrogram(
             orientation="left",
             color_threshold=0,
             above_threshold_color="black",
+            leaf_font_size=node_font_size
         )
 
     # change the color of the nodes for cases if the user wants to.
