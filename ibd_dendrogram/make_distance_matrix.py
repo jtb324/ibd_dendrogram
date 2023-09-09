@@ -41,7 +41,7 @@ def _determine_distances(**kwargs) -> tuple[Optional[str], float]:
         dataframe from the pairs file that has been filtered to just connections \
             with the main grid
     """
-    # checking to make sure the function has the right parameters in the kwargs and then 
+    # checking to make sure the function has the right parameters in the kwargs and then
     # returning an error if it doesn't
     err = check_kwargs(kwargs)
 
@@ -174,6 +174,33 @@ def generate_dendrogram(matrix: npt.NDArray) -> npt.NDArray:
     return sch.linkage(squareform_matrix, method="ward")
 
 
+def _check_for_overlap(cases: List[str], exclusions: List[str]) -> None:
+    """Make sure there is no overlap between individuals in the cases and exclusions \
+        list provided to the _generate_label_colors method
+
+    Parameters
+    ----------
+    cases : List[str]
+        list of individuals who are considered cases for a
+        disease or phenotype
+
+    exclusions : List[str]
+        list of individuals who are consider exclusions and are indicated as N/A or
+        -1 by the phenotype file. This value defaults to None.
+
+    Raises
+    ------
+    ValueError
+        If there are overlapping individuals in the cases and exclusions lists then a \
+            ValueError is raised to indicate that the user should check their labelling.
+    """
+    if [ind for ind in cases if ind in exclusions]:
+        raise ValueError(
+            "Overlapping individuals found between cases and exclusions \
+                        lists. Please check your case and exclusions list labelling."
+        )
+
+
 def _generate_label_colors(
     grid_list: List[str], cases: List[str], exclusions: Optional[List[str]] = None
 ) -> Dict[str, str]:
@@ -199,6 +226,10 @@ def _generate_label_colors(
         returns a dictionary where the key is the id and the
         values are the color of the label for that id.
     """
+
+    if exclusions:
+        _check_for_overlap(cases, exclusions)
+
     color_dict = {}
 
     for grid in grid_list:
