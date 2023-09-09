@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ibd_dendrogram"
-version = "0.10.0"
+version = "0.11.0"
 description = "module that helps to form a dendrogram"
 authors = ["jtb <james.baker@vanderbilt.edu>"]
 repository = "https://github.com/jtb324/ibd_dendrogram"

@@ -22,11 +22,14 @@ def check_kwargs(args_dict: dict[str, Any]) -> Optional[str]:
             for elem in ["pair_1", "pair_2", "pairs_df", "cm_threshold"]
         ]
     ):
-        return "Not enough arguments passed to the _determine_distances function. Expected pair_1, pair_2, pairs_df, cm_threshold"
+        return "Not enough arguments passed to the _determine_distances function. \
+            Expected pair_1, pair_2, pairs_df, cm_threshold"
 
 
 def _determine_distances(**kwargs) -> tuple[Optional[str], float]:
-    """Function that will determine the distances between the main grid and then each connected grid. It will use a value of 2.5 for all grids that don't share a segment. This is just the min cM value, 5cM, divided in half
+    """Function that will determine the distances between the main grid and then \
+        each connected grid. It will use a value of 2.5 for all grids that don't \
+            share a segment. This is just the min cM value, 5cM, divided in half
 
     Parameters
     ----------
@@ -35,9 +38,11 @@ def _determine_distances(**kwargs) -> tuple[Optional[str], float]:
 
 
     pairs_df : pd.DataFrame
-        dataframe from the pairs file that has been filtered to just connections with the main grid
+        dataframe from the pairs file that has been filtered to just connections \
+            with the main grid
     """
-    # checking to make sure the function has the right parameters in the kwargs and then returning an error if it doesn't
+    # checking to make sure the function has the right parameters in the kwargs and then 
+    # returning an error if it doesn't
     err = check_kwargs(kwargs)
 
     if err != None:
@@ -64,7 +69,8 @@ def _determine_distances(**kwargs) -> tuple[Optional[str], float]:
         ibd_length: float = min_cM / 2
 
         print(
-            f"no pairwise sharing for grids {pair_1} and {pair_2}. Using an ibd length of {ibd_length}cM instead"
+            f"no pairwise sharing for grids {pair_1} and {pair_2}. Using an ibd length \
+                of {ibd_length}cM instead"
         )
 
     else:
@@ -168,7 +174,9 @@ def generate_dendrogram(matrix: npt.NDArray) -> npt.NDArray:
     return sch.linkage(squareform_matrix, method="ward")
 
 
-def _generate_label_colors(grid_list: List[str], cases: List[str]) -> Dict[str, str]:
+def _generate_label_colors(
+    grid_list: List[str], cases: List[str], exclusions: Optional[List[str]] = None
+) -> Dict[str, str]:
     """Function that will generate the color dictionary
     indicating what color each id label should be
 
@@ -177,8 +185,13 @@ def _generate_label_colors(grid_list: List[str], cases: List[str]) -> Dict[str, 
     grid_list : list[str]
         list of id strings
 
-    cases : list of individuals who are considered cases for a
-    disease or phenotype
+    cases : List[str]
+        list of individuals who are considered cases for a
+        disease or phenotype
+
+    exclusions : List[str]
+        list of individuals who are consider exclusions and are indicated as N/A or
+        -1 by the phenotype file. This value defaults to None
 
     Returns
     -------
@@ -191,6 +204,8 @@ def _generate_label_colors(grid_list: List[str], cases: List[str]) -> Dict[str, 
     for grid in grid_list:
         if grid in cases:
             color_dict[grid] = "r"
+        elif grid in exclusions:
+            color_dict[grid] = "g"
         else:
             color_dict[grid] = "k"
 
@@ -202,6 +217,7 @@ def draw_dendrogram(
     grids: List[str],
     output_name: Union[Path, str],
     cases: Optional[List[str]] = None,
+    exclusions: Optional[List[str]] = None,
     title: Optional[str] = None,
     node_font_size: int = 10,
     save_fig: bool = False,
@@ -226,6 +242,11 @@ def draw_dendrogram(
         be black. If the user provides a value then the case
         labels will be red. Value defaults to None
 
+    exclusions : List[str]
+        list of individuals who are consider exclusions and are
+        indicated as N/A or -1 by the phenotype file. This value
+        defaults to None
+
     title : str | None
         Optional title for the plot. If this is not provided
         then the plot will have no title
@@ -233,7 +254,7 @@ def draw_dendrogram(
     node_font_size : int
         Size for the font of the dendrogram leaf nodes
 
-    save_fig : bool 
+    save_fig : bool
         whether or not to save the figure. Defaults to False.
 
     Returns
@@ -258,7 +279,7 @@ def draw_dendrogram(
             orientation="left",
             color_threshold=0,
             above_threshold_color="black",
-            leaf_font_size=node_font_size
+            leaf_font_size=node_font_size,
         )
 
     # change the color of the nodes for cases if the user wants to.
