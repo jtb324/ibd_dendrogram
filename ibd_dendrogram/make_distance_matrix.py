@@ -69,8 +69,7 @@ def _determine_distances(**kwargs) -> tuple[Optional[str], float]:
         ibd_length: float = min_cM / 2
 
         print(
-            f"no pairwise sharing for grids {pair_1} and {pair_2}. Using an ibd length \
-                of {ibd_length}cM instead"
+            f"no pairwise sharing for grids {pair_1} and {pair_2}. Using an ibd length of {ibd_length}cM instead"
         )
 
     else:
@@ -315,7 +314,7 @@ def draw_dendrogram(
 
     # change the color of the nodes for cases if the user wants to.
     if cases:
-        color_dict = _generate_label_colors(grids, cases)
+        color_dict = _generate_label_colors(grids, cases, exclusions)
         yaxis_labels = ax.get_ymajorticklabels()
         for label in yaxis_labels:
             label.set_color(color_dict[label.get_text()])
