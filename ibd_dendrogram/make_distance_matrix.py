@@ -201,7 +201,7 @@ def _check_for_overlap(cases: List[str], exclusions: List[str]) -> None:
 
 
 def _generate_label_colors(
-    grid_list: List[str], cases: List[str], exclusions: Optional[List[str]] = None
+    grid_list: List[str], cases: List[str], exclusions: Optional[List[str]] = []
 ) -> Dict[str, str]:
     """Function that will generate the color dictionary
     indicating what color each id label should be
