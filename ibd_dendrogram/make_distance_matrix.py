@@ -55,7 +55,6 @@ def _determine_distances(**kwargs) -> tuple[Optional[str], float]:
     min_cM = kwargs.pop("cm_threshold")
 
     if pair_2 == pair_1:
-
         return None, float(0)
 
     # pulling out the length of the IBD segment based on hapibd
@@ -65,7 +64,6 @@ def _determine_distances(**kwargs) -> tuple[Optional[str], float]:
     ]
 
     if filtered_pairs.empty:
-
         ibd_length: float = min_cM / 2
 
         print(
@@ -133,11 +131,9 @@ def make_distance_matrix(
     ids_index = []
 
     for i in range(len(id_list)):
-
         ids_index.append(id_list[i])
 
         for j in range(len(id_list)):
-
             err, distance = distance_function(
                 pair_1=id_list[i],
                 pair_2=id_list[j],
@@ -201,7 +197,7 @@ def _check_for_overlap(cases: List[str], exclusions: List[str]) -> None:
 
 
 def _generate_label_colors(
-    grid_list: List[str], cases: List[str], exclusions: Optional[List[str]] = []
+    grid_list: List[str], cases: List[str], exclusions: List[str] = []
 ) -> Dict[str, str]:
     """Function that will generate the color dictionary
     indicating what color each id label should be
