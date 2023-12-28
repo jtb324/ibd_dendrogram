@@ -243,7 +243,7 @@ def draw_dendrogram(
     grids: List[str],
     output_name: Union[Path, str],
     cases: Optional[List[str]] = None,
-    exclusions: Optional[List[str]] = None,
+    exclusions: List[str] = [],
     title: Optional[str] = None,
     node_font_size: int = 10,
     save_fig: bool = False,
