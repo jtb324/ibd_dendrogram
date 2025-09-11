@@ -8,3 +8,7 @@ A python module to help users create a distance matrix and construct a dendrogra
 
 This module has four accessible methods: make_distance_matrix, record_matrix, generate_dendrogram, draw_dendrogram.
 
+
+# Notice (911/25):
+This code is now incorporated into the tool DRIVE and therefore will no longer be updated
+
